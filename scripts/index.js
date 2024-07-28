@@ -10,11 +10,8 @@
 
 const content = document.querySelector('.content');
 const placesList = content.querySelector('.places__list');
-const addButton = content.querySelector('.profile__add-button');
 
-let index = 0;
-
-const addPlace = (title, link, callback) => {
+const createCard = (title, link, callback) => {
   const cardTemplate = document.querySelector('#card-template').content;
   const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
 
@@ -26,17 +23,13 @@ const addPlace = (title, link, callback) => {
     callback(cardElement);
   });
 
-  placesList.append(cardElement);
+  return cardElement;
 }
 
 const removePlace = (cardElement) => {
   cardElement.remove();
 }
 
-addButton.addEventListener('click', () => {  
-  let titleName = initialCards[index].name;
-  let imageLink = initialCards[index].link;
-  
-  addPlace(titleName, imageLink, removePlace);
-  index++;
+initialCards.forEach(element => {
+  placesList.append(createCard(element.name, element.link, removePlace))
 });
