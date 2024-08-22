@@ -1,14 +1,18 @@
-// @todo: Темплейт карточки
+// @todo: создать инфраструктурное окружение с помощью Webpack
 
-// @todo: DOM узлы
+// @todo: разбить код на отдельные модули
 
-// @todo: Функция создания карточки
+// @todo: реализовать работу модальных окон редактирования профиля, 
 
-// @todo: Функция удаления карточки
+// @todo: реализовать работу добавления карточки и превью фотографии
 
-// @todo: Вывести карточки на страницу
+// @todo: реализовать работу действие лайка на карточке
+import './styles/index.css';
+import initialCards from './scripts/cards.js'
+
 
 const content = document.querySelector('.content');
+// import { from } from 'core-js/core/array';
 const placesList = content.querySelector('.places__list');
 
 const createCard = (card, callback) => {
