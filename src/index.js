@@ -1,40 +1,18 @@
-// @todo: создать инфраструктурное окружение с помощью Webpack
-
-// @todo: разбить код на отдельные модули
-
-// @todo: реализовать работу модальных окон редактирования профиля, 
-
-// @todo: реализовать работу добавления карточки и превью фотографии
-
-// @todo: реализовать работу действие лайка на карточке
 import './styles/index.css';
-import initialCards from './scripts/cards.js'
-
+import initialCards from './scripts/cards.js';
+import { createCard, likeCard, removePlace } from './scripts/card.js';
+import { showModalEditProfile, showModalAddCard, showCard } from './scripts/modal.js';
 
 const content = document.querySelector('.content');
-// import { from } from 'core-js/core/array';
 const placesList = content.querySelector('.places__list');
+const profileName = document.querySelector('.profile__title');
+const profileJob = document.querySelector('.profile__description');
+const editProfileButton = document.querySelector('.profile__edit-button');
+const addCardButton = document.querySelector('.profile__add-button');
 
-const createCard = (card, callback) => {
-  const cardTemplate = document.querySelector('#card-template').content;
-  const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
-  const cardImage = cardElement.querySelector('.card__image');
+initialCards.forEach(element => placesList.append(createCard(element, likeCard, showCard, removePlace)));
 
-  cardElement.querySelector('.card__title').textContent = card.name;
-  cardImage.alt = card.name;
-  cardImage.src = card.link;
-  
-  cardElement.querySelector('.card__delete-button').addEventListener('click', function(evt) {
-    callback(cardElement);
-  });
+editProfileButton.addEventListener('click', () => showModalEditProfile(profileName, profileJob));
+addCardButton.addEventListener('click', () => showModalAddCard());
 
-  return cardElement;
-}
-
-const removePlace = (cardElement) => {
-  cardElement.remove();
-}
-
-initialCards.forEach(element => {
-  placesList.append(createCard(element, removePlace))
-});
+export { placesList, profileName, profileJob };
