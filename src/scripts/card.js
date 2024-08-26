@@ -1,5 +1,3 @@
-import { copyCardInfo } from './form.js';
-
 //функция добавления и удаления лайка
 const likeCard = (evt) => evt.target.classList.toggle('card__like-button_is-active');
 
@@ -7,7 +5,7 @@ const likeCard = (evt) => evt.target.classList.toggle('card__like-button_is-acti
 const removePlace = (card) => card.remove();
 
 //функция создания карточки
-const createCard = (card, ...args) => {
+const createCard = (card, callbackFunctionsObject) => {
   const cardTemplate = document.querySelector('#card-template').content;
   const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
   const cardImage = cardElement.querySelector('.card__image');
@@ -15,11 +13,13 @@ const createCard = (card, ...args) => {
   const likeButton = cardElement.querySelector('.card__like-button');
   const deleteButton = cardElement.querySelector('.card__delete-button');
 
-  copyCardInfo(card, cardImage, cardTitle);
+  cardTitle.textContent = card.name;
+  cardImage.alt = card.name;
+  cardImage.src = card.link;
 
-  likeButton.addEventListener('click', (evt) => args[0](evt));
-  cardImage.addEventListener('click', () => args[1](cardImage));
-  deleteButton.addEventListener('click', () => args[2](cardElement), {once: true});
+  likeButton.addEventListener('click', (evt) => callbackFunctionsObject.likeCard(evt));
+  cardImage.addEventListener('click', () => callbackFunctionsObject.showCard(card.name, card.link));
+  deleteButton.addEventListener('click', () => callbackFunctionsObject.removePlace(cardElement), {once: true});
   
   return cardElement;
 }
