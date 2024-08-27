@@ -32,20 +32,20 @@ const popupCaption = popupCard.querySelector('.popup__caption');
 
 const newCard = {};
 
-const handleFormSubmitProfile = (popup, evt) => {
+const handleFormSubmitProfile = (popup, evt, name, job) => {
   evt.preventDefault();
   
-  profileName.textContent = evt.target[0].value;
-  profileJob.textContent = evt.target[1].value;
+  profileName.textContent = name;
+  profileJob.textContent = job;
   
   closeModal(popup);
 }
 
-const handleFormSubmitCard = (popup, evt) => {
+const handleFormSubmitCard = (popup, evt, name, link) => {
   evt.preventDefault();
   
-  newCard.name = evt.target[0].value;
-  newCard.link = evt.target[1].value;
+  newCard.name = name;
+  newCard.link = link;
 
   placesList.prepend(createCard(newCard, {likeCard, showCard, removePlace}));
   
@@ -58,7 +58,7 @@ const showModalEditProfile = (name, job) => {
 
   openModal(popupEdit);
 
-  formEditProfile.addEventListener('submit', (evt) => handleFormSubmitProfile(popupEdit, evt), {once: true});
+  formEditProfile.addEventListener('submit', (evt) => handleFormSubmitProfile(popupEdit, evt, evt.target[0].value, evt.target[1].value), {once: true});
 }
 
 //функция модуля добавления новой карточки
@@ -68,7 +68,7 @@ const showModalAddCard = () => {
   
   openModal(popupNewCard);
   
-  formAddCard.addEventListener('submit', (evt) => handleFormSubmitCard(popupNewCard, evt), {once: true});
+  formAddCard.addEventListener('submit', (evt) => handleFormSubmitCard(popupNewCard, evt, evt.target[0].value, evt.target[1].value), {once: true});
 }
 
 //функция модуля показа карточки
