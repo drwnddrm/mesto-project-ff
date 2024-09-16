@@ -1,0 +1,6 @@
+.popup__content_content_avatar {
+  display: grid;
+  gap: 10px;
+  grid-auto-rows: min-content;
+  min-block-size: auto;
+}

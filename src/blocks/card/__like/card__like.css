@@ -1,0 +1,7 @@
+.card__like {
+  display: grid;
+  font-size: 13px;
+  grid-template-rows: 14px 20px;
+  justify-items: center;
+  align-items: end;
+}
