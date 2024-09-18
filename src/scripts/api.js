@@ -11,11 +11,12 @@ const getProfileValues = () => {
     method: 'GET',
     headers: config.headers
   })
-  .then(res => {
+  .then((res) => {
     if(res.ok) {
-      return res.json()
+      return res.json();
     }
-    return Promise.reject(`Ошибка: ${res.status}`);
+
+    return Promise.reject(`Ошибка ${res.status}`);
   })
 }
 
@@ -24,11 +25,12 @@ const getCards = () => {
     method: 'GET',
     headers: config.headers
   })
-  .then(res => {
+  .then((res) => {
     if(res.ok) {
-      return res.json()
+      return res.json();
     }
-    return Promise.reject(`Ошибка: ${res.status}`);
+
+    return Promise.reject(`Ошибка ${res.status}`);
   })
 }
 
@@ -41,12 +43,6 @@ const editProfileInfo = (name, about) => {
       about: about
     })
   })
-  .then(res => {
-    if(res.ok) {
-      return res.json()
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  })
 }
 
 const editProfileAvatar = (src) => {
@@ -56,12 +52,6 @@ const editProfileAvatar = (src) => {
     body: JSON.stringify({
       avatar: src
     })
-  })
-  .then(res => {
-    if(res.ok) {
-      return
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
   })
 }
 
@@ -74,24 +64,12 @@ const addNewCard = (name, link) => {
       link: link
     })
   })
-  .then(res => {
-    if(res.ok) {
-      return res.json()
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  })
 }
 
-const removePlaceFromServer = () => {
+const removePlaceFromServer = (card) => {
   return fetch(`${config.baseUrl}/cards/${card["_id"]}`, {
     method: 'DELETE',
     headers: config.headers
-  })
-  .then(res => {
-    if(res.ok) {
-      return res.json()
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
   })
 }
 
@@ -100,24 +78,12 @@ const putLike = (card) => {
     method: 'PUT',
     headers: config.headers
   })
-  .then(res => {
-    if(res.ok) {
-      return res.json()
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  })
 }
 
 const deleteLike = (card) => {
   return fetch(`${config.baseUrl}/cards/likes/${card["_id"]}`, {
     method: 'DELETE',
     headers: config.headers
-  })
-  .then(res => {
-    if(res.ok) {
-      return res.json()
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
   })
 }
 

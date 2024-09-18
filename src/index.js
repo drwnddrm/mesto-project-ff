@@ -2,9 +2,10 @@ import './styles/index.css';
 import { createCard, toggleLike, removeElement } from './scripts/card.js';
 import { openModal, closeModal } from './scripts/modal.js';
 import { enableValidation, clearValidation } from './scripts/validation.js';
+import { checkResponse } from './scripts/utils.js';
 import { getProfileValues, getCards, editProfileInfo, editProfileAvatar, addNewCard, removePlaceFromServer, putLike, deleteLike } from './scripts/api.js';
 
-import {placesList, profileName, profileJob, 
+import { placesList, profileName, profileJob, 
   profileImage, editProfileButton, editProfileImageButton,
   addCardButton, popups, popupEdit, popupAvatar,
   popupNewCard, popupCard, formEditProfile, inputName, inputJob,
@@ -12,83 +13,77 @@ import {placesList, profileName, profileJob,
   image, popupCaption, validationConfig } from './scripts/constants.js';
 
 const handleFormSubmitProfile = (popup, evt, name, about) => {
-  const btn = popup.querySelector('.popup__button')
-  
   evt.preventDefault();
   
-  btn.textContent = 'Сохранение...';
+  evt.submitter.textContent = 'Сохранение...';
+  clearValidation(popup, validationConfig);
+  
   editProfileInfo(name, about)
+  .then(checkResponse)
   .then((result) => {
     profileName.textContent = result.name;
     profileJob.textContent = result.about;
-    btn.textContent = 'Сохранить';
+    closeModal(popup);
   })
   .catch((err) => {
-    console.log(err);
+    console.error(err);
+  })
+  .finally(() => {
+    evt.submitter.textContent = 'Сохранить';
   });
-
-  
-  
-  closeModal(popup);
 }
 
 const handleFormSubmitAvatar = (popup, evt, src) => {
-  const btn = popup.querySelector('.popup__button')
-
   evt.preventDefault();
   
-  btn.textContent = 'Сохранение...';
+  evt.submitter.textContent = 'Сохранение...';
+  clearValidation(popup, validationConfig);
+  
   editProfileAvatar(src)
+  .then(checkResponse)
   .then(() => {
-    btn.textContent = 'Сохранить';
+    profileImage.style["background-image"] = `url(${src})`;
+    closeModal(popup);
   })
   .catch((err) => {
-    console.log(err);
+    console.error(err);
+  })
+  .finally(() => {
+    evt.submitter.textContent = 'Сохранить';
   });
-  
-  profileImage.style["background-image"] = `url(${src})`;
-  
-  closeModal(popup);
 }
 
 const handleFormSubmitCard = (popup, evt, nameCard, linkCard) => {
-  const btn = popup.querySelector('.popup__button')
-  
   evt.preventDefault();
   
-  btn.textContent = 'Сохранение...';
+  evt.submitter.textContent = 'Сохранение...';
+  clearValidation(popup, validationConfig);
+  
   addNewCard(nameCard, linkCard)
+  .then(checkResponse)
   .then((result) => {
-    placesList.prepend(createCard(result, {likePlace, showCard, removePlace}))
-    btn.textContent = 'Сохранить';
+    placesList.prepend(createCard(result, result.owner['_id'], {likePlace, showCard, removePlace}));
+    closeModal(popup);
   })
   .catch((err) => {
-    console.log(err);
+    console.error(err);
+  })
+  .finally(() => {
+    evt.submitter.textContent = 'Сохранить';
   });
-  
-  closeModal(popup);
 }
 
 const showModalEditProfile = (name, job) => {
   inputName.value = name;
   inputJob.value = job;
 
-  clearValidation(popupEdit, validationConfig);
-  enableValidation(validationConfig);
-
   openModal(popupEdit);
-
-  formEditProfile.addEventListener('submit', (evt) => handleFormSubmitProfile(popupEdit, evt, evt.target[0].value, evt.target[1].value), {once: true});
 }
 
 const showModalEditAvatar = () => {
   inputProfileImage.value = '';
-  
-  clearValidation(popupAvatar, validationConfig);
-  enableValidation(validationConfig);
-  openModal(popupAvatar);
 
-  formEditAvatar.addEventListener('submit', (evt) => handleFormSubmitAvatar(popupAvatar, evt, inputProfileImage.value), {once: true})
+  openModal(popupAvatar);
 }
 
 //функция модуля добавления новой карточки
@@ -96,12 +91,7 @@ const showModalAddCard = () => {
   inputPlace.value = '';
   inputLink.value = '';
 
-  clearValidation(popupNewCard, validationConfig);
-  enableValidation(validationConfig);
-
   openModal(popupNewCard);
-  
-  formAddCard.addEventListener('submit', (evt) => handleFormSubmitCard(popupNewCard, evt, evt.target[0].value, evt.target[1].value), {once: true});
 }
 
 //функция модуля показа карточки
@@ -115,31 +105,36 @@ const showCard = (name, link) => {
 
 const likePlace = (evt, card, likeCounts) => {
   toggleLike(evt)
+  
   if(evt.target.classList.contains('card__like-button_is-active')) {
     putLike(card)
+    .then(checkResponse)
     .then((result) => {
       likeCounts.textContent = result.likes.length;
     })
     .catch((err) => {
-      console.log(err);
+      console.error(err);
     });
   }else {
     deleteLike(card)
+    .then(checkResponse)
     .then((result) => {
       likeCounts.textContent = result.likes.length;
     })
     .catch((err) => {
-      console.log(err);
+      console.error(err);
     });
   }
 }
 
 const removePlace = (cardElement, card) => {
-  removeElement(cardElement);
-
   removePlaceFromServer(card)
+  .then(checkResponse)
+  .then(() => {
+    removeElement(cardElement);
+  })
   .catch((err) => {
-    console.log(err);
+    console.error(err);
   });
 }
 
@@ -158,25 +153,24 @@ popups.forEach(popup => {
   });
 });
 
+enableValidation(validationConfig);
+
 editProfileImageButton.addEventListener('click', () => showModalEditAvatar())
 editProfileButton.addEventListener('click', () => showModalEditProfile(profileName.textContent, profileJob.textContent));
 addCardButton.addEventListener('click', () => showModalAddCard());
+formEditProfile.addEventListener('submit', (evt) => handleFormSubmitProfile(popupEdit, evt, evt.target[0].value, evt.target[1].value));
+formEditAvatar.addEventListener('submit', (evt) => handleFormSubmitAvatar(popupAvatar, evt, inputProfileImage.value));
+formAddCard.addEventListener('submit', (evt) => handleFormSubmitCard(popupNewCard, evt, evt.target[0].value, evt.target[1].value));
 
-getProfileValues()
-.then((result) => {
-  profileImage.style["background-image"] = `url(${result.avatar})`
-  profileName.textContent = result.name;
-  profileJob.textContent = result.about;
-  profileImage.src = result.avatar;
+Promise.all([getProfileValues(), getCards()])
+.then(([userData, cards]) => {
+  profileImage.style["background-image"] = `url(${userData.avatar})`
+  profileName.textContent = userData.name;
+  profileJob.textContent = userData.about;
+  profileImage.src = userData.avatar;
+
+  cards.forEach((element) => placesList.append(createCard(element, userData['_id'], {likePlace, showCard, removePlace})))
 })
 .catch((err) => {
-  console.log(err);
-});
-
-getCards()
-.then((result) => {
-  result.forEach((element) => placesList.append(createCard(element, {likePlace, showCard, removePlace})))
+  console.error(err);
 })
-.catch((err) => {
-  console.log(err);
-});

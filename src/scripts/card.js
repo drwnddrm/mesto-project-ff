@@ -9,7 +9,7 @@ const removeElement = (cardElement) => {
 };
 
 //функция создания карточки
-const createCard = (card, callbackFunctionsObject) => {
+const createCard = (card, userId, callbackFunctionsObject) => {
   const cardTemplate = document.querySelector('#card-template').content;
   const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
   const cardImage = cardElement.querySelector('.card__image');
@@ -25,7 +25,7 @@ const createCard = (card, callbackFunctionsObject) => {
   cardImage.src = card.link;
   likeCounts.textContent = card.likes.length;
   card.likes.forEach((element) => {
-    if(element['_id'] === 'cf3609aaf38dbb7afaca5d77') {
+    if(element['_id'] === userId) {
       likeButton.classList.add('card__like-button_is-active')
     }
   })
@@ -33,8 +33,9 @@ const createCard = (card, callbackFunctionsObject) => {
   likeButton.addEventListener('click', (evt) => callbackFunctionsObject.likePlace(evt, card, likeCounts));
   cardImage.addEventListener('click', () => callbackFunctionsObject.showCard(card.name, card.link));
 
-  if(card.owner['_id'] === 'cf3609aaf38dbb7afaca5d77') {
+  if(card.owner['_id'] === userId) {
     deleteButton.style.visibility = 'visible';
+    deleteButton.disabled = false
     deleteButton.addEventListener('click', () => callbackFunctionsObject.removePlace(cardElement, card), {once: true});
   }
   
