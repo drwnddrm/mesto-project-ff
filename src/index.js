@@ -2,7 +2,6 @@ import './styles/index.css';
 import { createCard, toggleLike, removeElement } from './scripts/card.js';
 import { openModal, closeModal } from './scripts/modal.js';
 import { enableValidation, clearValidation } from './scripts/validation.js';
-import { checkResponse } from './scripts/utils.js';
 import { getProfileValues, getCards, editProfileInfo, editProfileAvatar, addNewCard, removePlaceFromServer, putLike, deleteLike } from './scripts/api.js';
 
 import { placesList, profileName, profileJob, 
@@ -16,10 +15,8 @@ const handleFormSubmitProfile = (popup, evt, name, about) => {
   evt.preventDefault();
   
   evt.submitter.textContent = 'Сохранение...';
-  clearValidation(popup, validationConfig);
   
   editProfileInfo(name, about)
-  .then(checkResponse)
   .then((result) => {
     profileName.textContent = result.name;
     profileJob.textContent = result.about;
@@ -37,10 +34,8 @@ const handleFormSubmitAvatar = (popup, evt, src) => {
   evt.preventDefault();
   
   evt.submitter.textContent = 'Сохранение...';
-  clearValidation(popup, validationConfig);
-  
+
   editProfileAvatar(src)
-  .then(checkResponse)
   .then(() => {
     profileImage.style["background-image"] = `url(${src})`;
     closeModal(popup);
@@ -57,10 +52,8 @@ const handleFormSubmitCard = (popup, evt, nameCard, linkCard) => {
   evt.preventDefault();
   
   evt.submitter.textContent = 'Сохранение...';
-  clearValidation(popup, validationConfig);
   
   addNewCard(nameCard, linkCard)
-  .then(checkResponse)
   .then((result) => {
     placesList.prepend(createCard(result, result.owner['_id'], {likePlace, showCard, removePlace}));
     closeModal(popup);
@@ -78,12 +71,14 @@ const showModalEditProfile = (name, job) => {
   inputJob.value = job;
 
   openModal(popupEdit);
+  clearValidation(popupEdit, validationConfig);
 }
 
 const showModalEditAvatar = () => {
   inputProfileImage.value = '';
 
   openModal(popupAvatar);
+  clearValidation(popupAvatar, validationConfig);
 }
 
 //функция модуля добавления новой карточки
@@ -92,6 +87,7 @@ const showModalAddCard = () => {
   inputLink.value = '';
 
   openModal(popupNewCard);
+  clearValidation(popupNewCard, validationConfig);
 }
 
 //функция модуля показа карточки
@@ -104,12 +100,10 @@ const showCard = (name, link) => {
 }
 
 const likePlace = (evt, card, likeCounts) => {
-  toggleLike(evt)
-  
-  if(evt.target.classList.contains('card__like-button_is-active')) {
+  if(!evt.target.classList.contains('card__like-button_is-active')) {
     putLike(card)
-    .then(checkResponse)
     .then((result) => {
+      toggleLike(evt)
       likeCounts.textContent = result.likes.length;
     })
     .catch((err) => {
@@ -117,8 +111,8 @@ const likePlace = (evt, card, likeCounts) => {
     });
   }else {
     deleteLike(card)
-    .then(checkResponse)
     .then((result) => {
+      toggleLike(evt)
       likeCounts.textContent = result.likes.length;
     })
     .catch((err) => {
@@ -129,7 +123,6 @@ const likePlace = (evt, card, likeCounts) => {
 
 const removePlace = (cardElement, card) => {
   removePlaceFromServer(card)
-  .then(checkResponse)
   .then(() => {
     removeElement(cardElement);
   })

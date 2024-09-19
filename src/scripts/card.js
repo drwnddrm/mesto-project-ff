@@ -1,5 +1,6 @@
 //функция добавления и удаления лайка
 const toggleLike = (evt) => {
+  console.log(evt.target)
   evt.target.classList.toggle('card__like-button_is-active');
 };
 

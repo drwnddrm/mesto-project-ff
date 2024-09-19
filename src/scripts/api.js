@@ -1,3 +1,5 @@
+import { checkResponse } from '../utils/utils.js';
+
 const config = {
   baseUrl: 'https://nomoreparties.co/v1/wff-cohort-22',
   headers: {
@@ -11,13 +13,7 @@ const getProfileValues = () => {
     method: 'GET',
     headers: config.headers
   })
-  .then((res) => {
-    if(res.ok) {
-      return res.json();
-    }
-
-    return Promise.reject(`Ошибка ${res.status}`);
-  })
+  .then(checkResponse)
 }
 
 const getCards = () => {
@@ -25,13 +21,7 @@ const getCards = () => {
     method: 'GET',
     headers: config.headers
   })
-  .then((res) => {
-    if(res.ok) {
-      return res.json();
-    }
-
-    return Promise.reject(`Ошибка ${res.status}`);
-  })
+  .then(checkResponse)
 }
 
 const editProfileInfo = (name, about) => {
@@ -43,6 +33,7 @@ const editProfileInfo = (name, about) => {
       about: about
     })
   })
+  .then(checkResponse)
 }
 
 const editProfileAvatar = (src) => {
@@ -53,6 +44,7 @@ const editProfileAvatar = (src) => {
       avatar: src
     })
   })
+  .then(checkResponse)
 }
 
 const addNewCard = (name, link) => {
@@ -64,6 +56,7 @@ const addNewCard = (name, link) => {
       link: link
     })
   })
+  .then(checkResponse)
 }
 
 const removePlaceFromServer = (card) => {
@@ -71,6 +64,7 @@ const removePlaceFromServer = (card) => {
     method: 'DELETE',
     headers: config.headers
   })
+  .then(checkResponse)
 }
 
 const putLike = (card) => {
@@ -78,6 +72,7 @@ const putLike = (card) => {
     method: 'PUT',
     headers: config.headers
   })
+  .then(checkResponse)
 }
 
 const deleteLike = (card) => {
@@ -85,6 +80,7 @@ const deleteLike = (card) => {
     method: 'DELETE',
     headers: config.headers
   })
+  .then(checkResponse)
 }
 
 export { getProfileValues, getCards, editProfileInfo, editProfileAvatar, addNewCard, removePlaceFromServer, putLike, deleteLike }
